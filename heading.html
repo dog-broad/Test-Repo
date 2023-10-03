@@ -1,43 +1,66 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Website Heading Extractor</title>
+    <title>Codeforces Leaderboard App</title>
 </head>
 <body>
-  <h1>Website Heading Extractor</h1>
-  <p>Enter a website URL below:</p>
-  <input type="text" id="websiteUrl" placeholder="Enter a website URL" />
-  <button onclick="extractHeading()">Extract Heading</button>
-  <p>Extracted Heading:</p>
-  <div id="outputHeading"></div>
+    <h1>Codeforces Leaderboard App</h1>
+    
+    <label for="contestId">Contest ID:</label>
+    <input type="text" id="contestId" value="1875" required>
+    
+    <label for="searchTokens">Search Tokens (Comma-separated):</label>
+    <input type="text" id="searchTokens" value="cmrit25, 21r0" required>
+    
+    <button id="downloadButton">Download Leaderboard</button>
+    
+    <div id="leaderboard"></div>
 
-  <script>
-    function extractHeading() {
-      const websiteUrl = document.getElementById("websiteUrl").value;
-      const outputHeading = document.getElementById("outputHeading");
+    <script>
+        document.getElementById("downloadButton").addEventListener("click", function () {
+            const contestId = document.getElementById("contestId").value;
+            const searchTokens = document.getElementById("searchTokens").value.split(",");
 
-      if (!websiteUrl) {
-        outputHeading.innerHTML = "Please enter a valid website URL.";
-        return;
-      }
-
-    fetch(websiteUrl, { mode: 'no-cors' })
-        .then((response) => response.text())
-        .then((html) => {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, "text/html");
-            const heading = doc.querySelector("h1, h2, h3, h4, h5, h6");
-
-            if (heading) {
-                outputHeading.innerHTML = heading.textContent;
-            } else {
-                outputHeading.innerHTML = "No heading found on the website.";
-            }
-        })
-        .catch((error) => {
-            outputHeading.innerHTML = "An error occurred: " + error.message;
+            // output fetch link to console
+            console.log(`https://codeforces.com/api/contest.standings?contestId=${contestId}&showUnofficial=false`);
+            
+            // Make an API request to Codeforces to download the leaderboard
+            fetch(`https://codeforces.com/api/contest.standings?contestId=${contestId}&showUnofficial=false`, { mode: "cors" })
+                .then(response => {
+                    console.log(response);
+                    if(!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json();
+                })
+                .then(json => {
+                    if (json.status !== "OK") {
+                        throw new Error("Codeforces API returned an error");
+                    }
+                    displayLeaderboard(json.result.rows, searchTokens);
+                })
+                .catch(error => {
+                    console.error("There has been a problem with your fetch operation:", error);
+                });
         });
-    }
-  </script>
+
+        function displayLeaderboard(leaderboardData, searchTokens) {
+            const leaderboardDiv = document.getElementById("leaderboard");
+            leaderboardDiv.innerHTML = "<h2>Leaderboard</h2>";
+            
+            for (const entry of leaderboardData) {
+                for (const member of entry.party.members) {
+                    for (const token of searchTokens) {
+                        if (member.handle.toLowerCase().includes(token.toLowerCase())) {
+                            const participant = document.createElement("div");
+                            participant.textContent = `${entry.rank}. ${member.handle} - ${entry.points}`;
+                            leaderboardDiv.appendChild(participant);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 </body>
 </html>
