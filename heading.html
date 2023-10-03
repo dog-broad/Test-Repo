@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Website Heading Extractor</title>
+</head>
+<body>
+  <h1>Website Heading Extractor</h1>
+  <p>Enter a website URL below:</p>
+  <input type="text" id="websiteUrl" placeholder="Enter a website URL" />
+  <button onclick="extractHeading()">Extract Heading</button>
+  <p>Extracted Heading:</p>
+  <div id="outputHeading"></div>
+
+  <script>
+    function extractHeading() {
+      const websiteUrl = document.getElementById("websiteUrl").value;
+      const outputHeading = document.getElementById("outputHeading");
+
+      if (!websiteUrl) {
+        outputHeading.innerHTML = "Please enter a valid website URL.";
+        return;
+      }
+
+      fetch(websiteUrl)
+        .then((response) => response.text())
+        .then((html) => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, "text/html");
+          const heading = doc.querySelector("h1, h2, h3, h4, h5, h6");
+
+          if (heading) {
+            outputHeading.innerHTML = heading.textContent;
+          } else {
+            outputHeading.innerHTML = "No heading found on the website.";
+          }
+        })
+        .catch((error) => {
+          outputHeading.innerHTML = "An error occurred: " + error.message;
+        });
+    }
+  </script>
+</body>
+</html>
