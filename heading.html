@@ -21,21 +21,21 @@
         return;
       }
 
-      fetch(websiteUrl)
+    fetch(websiteUrl, { mode: 'no-cors' })
         .then((response) => response.text())
         .then((html) => {
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(html, "text/html");
-          const heading = doc.querySelector("h1, h2, h3, h4, h5, h6");
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, "text/html");
+            const heading = doc.querySelector("h1, h2, h3, h4, h5, h6");
 
-          if (heading) {
-            outputHeading.innerHTML = heading.textContent;
-          } else {
-            outputHeading.innerHTML = "No heading found on the website.";
-          }
+            if (heading) {
+                outputHeading.innerHTML = heading.textContent;
+            } else {
+                outputHeading.innerHTML = "No heading found on the website.";
+            }
         })
         .catch((error) => {
-          outputHeading.innerHTML = "An error occurred: " + error.message;
+            outputHeading.innerHTML = "An error occurred: " + error.message;
         });
     }
   </script>
