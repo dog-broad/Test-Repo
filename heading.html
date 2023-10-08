@@ -1,25 +1,76 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Codeforces Leaderboard App</title>
+    <title>Codeforces Contest Leaderboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        .container {
+            display: block;
+            width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            position: absolute;
+            top: calc(50%);
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        h1 {
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, button {
+            width: calc(100% - 5px);
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+        footer {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            background-color: #f0f0f000;
+            color: black;
+            text-align: right;
+            padding: 10px;
+        }
+        #leaderboard {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
 </head>
 <body>
-    <h1>Codeforces Leaderboard App</h1>
-    
-    <label for="contestId">Contest ID:</label>
-    <input type="text" id="contestId" value="1875" required>
-    
-    <label for="searchTokens">Search Tokens (Comma-separated):</label>
-    <input type="text" id="searchTokens" value="cmrit25, 21r0" required>
-    
-    <button id="downloadButton">Download Leaderboard</button>
-    
-    <div id="leaderboard"></div>
+    <div class="container">
+        <h1>Codeforces Contest Leaderboard App</h1>
+        
+        <label for="contestId">Contest ID:</label>
+        <input type="text" id="contestId" required>
+        
+        <label for="searchTokens">Search Tokens (Comma-separated):</label>
+        <input type="text" id="searchTokens" value="cmrit25, 21r0" required>
+        
+        <button id="downloadButton">Download Leaderboard</button>
+        
+        <div id="leaderboard"></div>
+    </div>
+
+    <footer>
+        <p>Created by Dog-broad</p>
+    </footer>
 
     <script>
         document.getElementById("downloadButton").addEventListener("click", function () {
-            const contestId = document.getElementById("contestId").value;
-            const searchTokens = document.getElementById("searchTokens").value.split(",");
+            const contestId = document.getElementById("contestId").value.replace(" ", "");
+            const searchTokens = document.getElementById("searchTokens").value.replace(" ", "").split(",");
 
             // output fetch link to console
             console.log(`https://codeforces.com/api/contest.standings?contestId=${contestId}&showUnofficial=false`);
@@ -47,7 +98,8 @@
         function displayLeaderboard(leaderboardData, searchTokens) {
             const leaderboardDiv = document.getElementById("leaderboard");
             leaderboardDiv.innerHTML = "<h2>Leaderboard</h2>";
-            
+
+            let hasParticipants = false;
             for (const entry of leaderboardData) {
                 for (const member of entry.party.members) {
                     for (const token of searchTokens) {
@@ -55,10 +107,15 @@
                             const participant = document.createElement("div");
                             participant.textContent = `${entry.rank}. ${member.handle} - ${entry.points}`;
                             leaderboardDiv.appendChild(participant);
+                            hasParticipants = true;
                             break;
                         }
                     }
                 }
+            }
+
+            if (!hasParticipants) {
+                leaderboardDiv.innerHTML = "<p>No participants found.</p>";
             }
         }
     </script>

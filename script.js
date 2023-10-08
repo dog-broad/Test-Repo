@@ -292,6 +292,16 @@ async function handler(args){
         alert("Successfully Downloaded Leaderboard!");
     }
 
+    // Write all the participants to the output div
+    const output = document.getElementById("leaderboard");
+    output.innerHTML = "<h2>Leaderboard</h2>";
+
+    for(let i = 0; i < currentLeaderboard.length; i++) {
+        const participant = document.createElement("div");
+        participant.textContent = `${currentLeaderboard[i].rank}. ${currentLeaderboard[i].codeforcesId} - ${currentLeaderboard[i].score}`;
+        output.appendChild(participant);
+    }
+
     // Show the container class
     container[0].style.display = "block";
 

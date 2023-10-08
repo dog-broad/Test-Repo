@@ -65,6 +65,21 @@
             height: 30px;
             background-color: #45a1df;
         }
+        footer {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            background-color: #f0f0f000;
+            color: black;
+            text-align: right;
+            padding: 10px;
+        }
+        #leaderboard {
+            max-height: 200px;
+            overflow-x: auto;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
@@ -85,10 +100,14 @@
         <label for="csv-file">CSV File (Rank, ID, Score):</label>
         <input type="file" id="csv-file">
         <button id="downloadButton">Download Leaderboard</button>
+        <div id="leaderboard"></div>
     </div>
 
     <!--Set script file as script.js-->
     <script src="script.js"></script>
     
+    <footer>
+        <p>Created by Dog-broad</p>
+    </footer>
 </body>
 </html>

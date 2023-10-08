@@ -14,7 +14,7 @@ document.getElementById("xlsx-file").addEventListener("change", function (event)
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
         const html = XLSX.utils.sheet_to_html(worksheet);
-
+        
         document.getElementById("output").innerHTML = html;
     };
 
